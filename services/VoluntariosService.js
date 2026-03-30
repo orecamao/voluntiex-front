@@ -1,5 +1,5 @@
 app.factory("VoluntariosService", function ($http) {
-  var apiUrl = "http://localhost:8080/voluntarios"; // URL de la API
+  var apiUrl = "http://localhost:8080/voluntarios";
 
   return {
     getVoluntarios: function () {
