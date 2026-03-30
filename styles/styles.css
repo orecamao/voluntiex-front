@@ -6,7 +6,7 @@
 }
 
 .v-banner {
-  background-image: url('/assets/banner.jpg'); /* Cambia esta URL por la de tu imagen */
+  background-image: url('/assets/banner.jpg');
   background-size: contain;
   background-position: center;
   height: 25vh;
