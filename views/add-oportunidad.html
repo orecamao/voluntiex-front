@@ -1,0 +1,78 @@
+<div class="v-dark-background">
+  <div class="bg-dark text-white py-4">
+    <div class="container d-flex justify-content-between align-items-center">
+        <div class="row">
+          <div class="col-sm-3">
+            <img class="logo" src="assets/logo.png" alt="voluntiex-logo">
+          </div>
+          <div class="col-sm-9 d-flex flex-column align-items-start justify-content-center">
+            <h2>Voluntiex</h2>
+            <h3>Plataforma de Voluntariado</h3>
+          </div>
+        </div>
+        <div class="nav-menu d-flex">
+            <a ui-sref="home" class="text-white mr-4">Home</a>
+            <a ui-sref="login" ng-if="!isValidSession()" class="text-white mr-4">Login</a>
+            <a ui-sref="home" ng-if="isValidSession()" class="text-white" ng-click="logout()">Logout</a>
+        </div>
+    </div>
+  </div>
+
+
+  <div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+          <h2>Agregar Oportunidad</h2>
+          <form name="addOportunidadForm" ng-submit="submitOportunidad()">
+            <div class="form-group">
+              <label for="titulo">Título</label>
+              <input type="text" class="form-control" id="titulo" ng-model="nuevaOportunidad.titulo" required>
+            </div>
+        
+            <div class="form-group">
+              <label for="descripcion">Descripción</label>
+              <textarea class="form-control" id="descripcion" ng-model="nuevaOportunidad.descripcion" required></textarea>
+            </div>
+        
+            <div class="form-group">
+              <label for="ubicacion">Ubicación</label>
+              <input type="text" class="form-control" id="ubicacion" ng-model="nuevaOportunidad.ubicacion" required>
+            </div>
+        
+            <div class="form-group">
+              <label for="categoria">Categoría</label>
+              <input type="text" class="form-control" id="categoria" ng-model="nuevaOportunidad.categoria" required>
+            </div>
+        
+            <div class="form-group">
+              <label for="fechaInicio">Fecha de Inicio</label>
+              <input type="date" class="form-control" id="fechaInicio" ng-model="nuevaOportunidad.fechaInicio" required>
+            </div>
+        
+            <div class="form-group">
+              <label for="fechaFin">Fecha de Fin</label>
+              <input type="date" class="form-control" id="fechaFin" ng-model="nuevaOportunidad.fechaFin" required>
+            </div>
+        
+            <div class="form-group">
+              <label for="duracion">Duración (en días)</label>
+              <input type="number" class="form-control" id="duracion" ng-model="nuevaOportunidad.duracion" required>
+            </div>
+        
+            <div class="form-group">
+              <label for="tipo">Tipo de Oportunidad</label>
+              <input type="text" class="form-control" id="tipo" ng-model="nuevaOportunidad.tipo" required>
+            </div>
+        
+            <div class="form-group">
+              <label for="requisitos">Requisitos</label>
+              <input type="text" class="form-control" id="requisitos" ng-model="nuevaOportunidad.requisitos" required>
+            </div>
+        
+            <button type="submit" class="btn btn-success btn-block mt-3 mb-3" ng-click="addOportunidad()">Agregar Oportunidad</button>
+          </form>
+        </div>
+    </div>
+  </div>
+</div>
+

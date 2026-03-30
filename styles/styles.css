@@ -1,0 +1,35 @@
+.logo {
+  width: 100px;
+  height: auto;
+  background-color: white;
+  border-radius: 100px;
+}
+
+.v-banner {
+  background-image: url('/assets/banner.jpg'); /* Cambia esta URL por la de tu imagen */
+  background-size: contain;
+  background-position: center;
+  height: 25vh;
+  color: white;
+}
+
+.v-dark-background {
+  background:rgba(0, 0, 0, 0.4);
+}
+
+.search-bar {
+  width: 40%;
+  border-radius: 20px;
+  padding: 10px 20px;
+}
+
+.card {
+  margin-top: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+  height: 360px;
+}
+
+.card:hover {
+  transform: translateY(-10px);
+}

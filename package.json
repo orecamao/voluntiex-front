@@ -1,0 +1,19 @@
+{
+  "name": "voluntiexfrontend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^6.7.2",
+    "@uirouter/angularjs": "^1.1.1",
+    "angular": "^1.8.2",
+    "bootstrap": "^4.6.0",
+    "voluntiexfrontend": "file:"
+  }
+}

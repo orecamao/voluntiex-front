@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es" ng-app="voluntiexApp">
+  <head>
+      <meta charset="UTF-8">
+      <title>VoluntiexApp</title>
+      <link rel="stylesheet" href="styles/styles.css">
+      <link rel="stylesheet" href="styles/spaces.css">
+      <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+      <link rel="stylesheet" href="node_modules/@fortawesome/fontawesome-free/css/all.min.css">
+      <script src="node_modules/angular/angular.min.js"></script>
+      <script src="node_modules/@uirouter/angularjs/release/angular-ui-router.min.js"></script>
+      <script src="app.js"></script>
+      <script src="services/AuthService.js"></script>
+      <script src="controllers/AuthController.js"></script>
+      <script src="services/VoluntariosService.js"></script>
+      <script src="controllers/VoluntariosController.js"></script>
+      <script src="services/OrganizacionesService.js"></script>
+      <script src="controllers/OrganizacionesController.js"></script>
+      <script src="services/OportunidadesService.js"></script>
+      <script src="controllers/OportunidadesController.js"></script>
+      <script src="services/BeneficiariosService.js"></script>
+      <script src="controllers/BeneficiariosController.js"></script>
+      <script src="controllers/HomeController.js"></script>
+  </head>
+  <body>
+      <div ui-view></div>
+
+      <footer class="bg-dark text-white py-4">
+        <div class="container text-center">
+            <a href="#!/contact" class="text-white">Contáctanos</a>
+            <p class="mt-3">© 2025 Voluntiex. Plataforma de Voluntariado. Juntos por un futuro mejor. Todos los derechos reservados.</p>
+        </div>
+      </footer>
+  </body>
+</html>
