@@ -12,16 +12,22 @@
             <h3>Plataforma de Voluntariado</h3>
           </div>
         </div>
-        <div class="nav-menu d-flex">
-            <a ui-sref="home" class="text-white mr-4">Home</a>
-            <a ui-sref="login" class="text-white mr-4">Login</a>
+        <div class="d-flex flex-column align-items-end">
+          <div class="nav-menu d-flex">
+              <a ui-sref="home" class="text-white mr-4">Home</a>
+              <a ui-sref="login" ng-if="!isValidSession()" class="text-white mr-4">Login</a>
+              <a ui-sref="home" ng-if="isValidSession()" class="text-white" ng-click="logout()">Logout</a>
+          </div>
+          <div class="text-white mt-2" ng-if="isValidSession()">
+            {{ getSessionUserName() }}<span ng-if="getSessionUserType()"> ({{ getSessionUserType() }})</span>
+          </div>
         </div>
     </div>
   </div>
 
   <div class="container">
     <div class="row justify-content-center">
-        <div class="col-md-6">
+        <div class="col-md-6" ng-if="!isValidSession()">
             <h2 class="text-center">Crear Cuenta</h2>
             <form ng-submit="registrarUsuario()" novalidate>
               <div>

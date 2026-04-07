@@ -10,9 +10,15 @@ app.controller("HomeController", function ($scope, $controller, $location, AuthS
   };
 
   $scope.isValidSession = function () {
-    var token = AuthService.getToken();
-    console.log("token", token);
-    return token ? true : false;
+    return AuthService.hasSession();
+  };
+
+  $scope.getSessionUserName = function () {
+    return AuthService.getSessionUserName();
+  };
+
+  $scope.getSessionUserType = function () {
+    return AuthService.getSessionUserType();
   };
 
   $scope.goToAddForm = function () {
@@ -26,6 +32,9 @@ app.controller("HomeController", function ($scope, $controller, $location, AuthS
   };
 
   var setup = function () {
+    AuthService.restoreSession().catch(function (error) {
+      console.log("No se pudo reconstruir la sesión actual.", error);
+    });
     $scope.getOportunidades();
   };
 

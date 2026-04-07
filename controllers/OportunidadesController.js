@@ -32,9 +32,15 @@ app.controller(
     };
 
     $scope.isValidSession = function () {
-      var token = AuthService.getToken();
-      console.log("token", token);
-      return token ? true : false;
+      return AuthService.hasSession();
+    };
+
+    $scope.getSessionUserName = function () {
+      return AuthService.getSessionUserName();
+    };
+
+    $scope.getSessionUserType = function () {
+      return AuthService.getSessionUserType();
     };
 
     $scope.addOportunidad = function () {
@@ -59,5 +65,9 @@ app.controller(
         });
       });
     };
+
+    AuthService.restoreSession().catch(function (error) {
+      console.log("No se pudo reconstruir la sesión actual.", error);
+    });
   }
 );
