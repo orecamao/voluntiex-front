@@ -15,7 +15,31 @@ app.controller("AuthController", function ($scope, $location, AuthService) {
 
   $scope.isSubmitting = false;
 
+  var redirectIfAuthenticated = function () {
+    if (AuthService.hasSession() && AuthService.getSessionUserName()) {
+      $location.path("/");
+      return true;
+    }
+
+    return false;
+  };
+
+  var restoreSession = function () {
+    AuthService.restoreSession()
+      .then(function () {
+        redirectIfAuthenticated();
+      })
+      .catch(function (error) {
+        console.log("No se pudo reconstruir la sesi\u00f3n actual.", error);
+      });
+  };
+
   $scope.loginUsuario = function () {
+    if ($scope.isValidSession()) {
+      $location.path("/");
+      return;
+    }
+
     console.log("$scope.usuario: ", $scope.usuario);
 
     if (!$scope.usuario.email || !$scope.usuario.password) {
@@ -26,45 +50,71 @@ app.controller("AuthController", function ($scope, $location, AuthService) {
     AuthService.login($scope.usuario).then(
       function (response) {
         console.log("Login exitoso", response);
-
         $location.path("/");
       },
       function (error) {
-        console.error("Error al iniciar sesión", error);
-        alert("Error al iniciar sesión");
+        console.error("Error al iniciar sesi\u00f3n", error);
+        alert("Error al iniciar sesi\u00f3n");
       }
     );
   };
 
   $scope.logout = function () {
     AuthService.logout();
-    console.log("La sesión ha sido cerrada.");
+    console.log("La sesi\u00f3n ha sido cerrada.");
+    $location.path("/auth/login");
+  };
+
+  $scope.isValidSession = function () {
+    return AuthService.hasSession();
+  };
+
+  $scope.getSessionUserName = function () {
+    return AuthService.getSessionUserName();
+  };
+
+  $scope.getSessionUserType = function () {
+    return AuthService.getSessionUserType();
+  };
+
+  $scope.goToLogin = function () {
     $location.path("/auth/login");
   };
 
   $scope.registrarUsuario = function () {
+    if ($scope.isValidSession()) {
+      $location.path("/");
+      return;
+    }
+
     console.log("$scope.nuevoUsuario: ", $scope.nuevoUsuario);
 
     if ($scope.isSubmitting) {
-      return; 
+      return;
     }
 
-    $scope.isSubmitting = true; 
+    $scope.isSubmitting = true;
 
     if ($scope.nuevoUsuario.password === $scope.nuevoUsuario.confirmPassword) {
       AuthService.register($scope.nuevoUsuario).then(
         function (response) {
-          console.log("Usuario registrado con éxito", response.data);
-
-          $location.path("/auth/login");
+          console.log("Usuario registrado con \u00e9xito", response.data);
+          $scope.isSubmitting = false;
+          $location.path("/auth/register-success");
         },
         function (error) {
+          $scope.isSubmitting = false;
           console.error("Error al registrar usuario:", error);
           alert("Error al registrar usuario");
         }
       );
     } else {
-      alert("Las contraseñas no coinciden");
+      $scope.isSubmitting = false;
+      alert("Las contrase\u00f1as no coinciden");
     }
   };
+
+  if (!redirectIfAuthenticated()) {
+    restoreSession();
+  }
 });

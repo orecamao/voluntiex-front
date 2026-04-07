@@ -19,6 +19,11 @@ app.config(function ($stateProvider, $urlRouterProvider, $locationProvider) {
       templateUrl: "views/register.html",
       controller: "AuthController",
     })
+    .state("register-success", {
+      url: "/auth/register-success",
+      templateUrl: "views/register-success.html",
+      controller: "AuthController",
+    })
     .state("add-oportunidad", {
       url: "/add-oportunidad",
       templateUrl: "views/add-oportunidad.html",

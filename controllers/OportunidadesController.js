@@ -11,13 +11,17 @@ app.controller(
       tipo: "",
       requisitos: "",
     };
+    $scope.oportunidades = [];
+    $scope.hasLoadedOportunidades = false;
 
     $scope.getFiltroOportunidades = function () {
       OportunidadesService.getFiltroOportunidades($scope.filtro).then(
         function (response) {
-          $scope.oportunidades = response.data;
+          $scope.oportunidades = response.data || [];
+          $scope.hasLoadedOportunidades = true;
         },
         function (error) {
+          $scope.hasLoadedOportunidades = true;
           console.log("Error al buscar oportunidades: ", error);
         }
       );
@@ -25,16 +29,34 @@ app.controller(
     $scope.getOportunidades = function () {
       OportunidadesService.getOportunidades().then(function (response) {
         console.log('response.data', response.data)
-        if(response.data.length > 0) {
-          $scope.oportunidades = response.data;
-        }
+        $scope.oportunidades = response.data || [];
+        $scope.hasLoadedOportunidades = true;
       });
     };
 
+    $scope.clearFiltros = function () {
+      $scope.filtro = {
+        titulo: "",
+        categoria: "",
+        ubicacion: "",
+        duracion: "",
+        tipo: "",
+        requisitos: "",
+      };
+
+      $scope.getOportunidades();
+    };
+
     $scope.isValidSession = function () {
-      var token = AuthService.getToken();
-      console.log("token", token);
-      return token ? true : false;
+      return AuthService.hasSession();
+    };
+
+    $scope.getSessionUserName = function () {
+      return AuthService.getSessionUserName();
+    };
+
+    $scope.getSessionUserType = function () {
+      return AuthService.getSessionUserType();
     };
 
     $scope.addOportunidad = function () {
@@ -59,5 +81,9 @@ app.controller(
         });
       });
     };
+
+    AuthService.restoreSession().catch(function (error) {
+      console.log("No se pudo reconstruir la sesión actual.", error);
+    });
   }
 );

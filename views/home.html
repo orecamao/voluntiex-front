@@ -1,104 +1,113 @@
 <!-- views/home.html -->
 <div class="v-dark-background">
   <div class="bg-dark text-white py-4">
-      <div class="container d-flex justify-content-between align-items-center">
-          <div class="row">
-            <div class="col-sm-3">
-              <a ui-sref="home" aria-label="Ir al inicio">
-                <img class="logo" src="assets/logo.png" alt="voluntiex-logo">
-              </a>
-            </div>
-            <div class="col-sm-9 d-flex flex-column align-items-start justify-content-center">
-              <h2>Voluntiex</h2>
-              <h3>Plataforma de Voluntariado</h3>
-            </div>
-          </div>
-          <div class="nav-menu d-flex">
-              <a ui-sref="home" class="text-white mr-4">Home</a>
-              <a ui-sref="login" ng-if="!isValidSession()" class="text-white mr-4">Login</a>
-              <a ui-sref="register" class="text-white mr-4">Register</a>
-              <a ui-sref="home" ng-if="isValidSession()" class="text-white" ng-click="logout()">Logout</a>
-          </div>
+    <div class="container d-flex justify-content-between align-items-center">
+      <div class="row">
+        <div class="col-sm-3">
+          <a ui-sref="home" aria-label="Ir al inicio">
+            <img class="logo" src="assets/logo.png" alt="voluntiex-logo">
+          </a>
+        </div>
+        <div class="col-sm-9 d-flex flex-column align-items-start justify-content-center">
+          <h2>Voluntiex</h2>
+          <h3>Plataforma de Voluntariado</h3>
+        </div>
       </div>
+      <div class="d-flex flex-column align-items-end">
+        <div class="nav-menu d-flex">
+          <a ui-sref="home" class="text-white mr-4">Home</a>
+          <a ui-sref="login" ng-if="!isValidSession()" class="text-white mr-4">Login</a>
+          <a ui-sref="register" ng-if="!isValidSession()" class="text-white mr-4">Register</a>
+          <a ui-sref="home" ng-if="isValidSession()" class="text-white" ng-click="logout()">Logout</a>
+        </div>
+        <div class="text-white mt-2" ng-if="isValidSession()">
+          {{ getSessionUserName() }}<span ng-if="getSessionUserType()"> ({{ getSessionUserType() }})</span>
+        </div>
+      </div>
+    </div>
   </div>
 
   <section class="v-banner text-center">
-      <div class="v-dark-background overlay w-100 h-25 position-absolute"></div>
-      <div class="position-relative z-index-2">
-          <h1>Bienvenido a Voluntiex</h1>
-          <h2>La plataforma de voluntariado en línea</h2>
+    <div class="v-dark-background overlay w-100 h-25 position-absolute"></div>
+    <div class="position-relative z-index-2">
+      <h1>Bienvenido a Voluntiex</h1>
+      <h2>La plataforma de voluntariado en l&iacute;nea</h2>
 
-          <form ng-submit="getFiltroOportunidades()" 
-            class="container d-flex justify-content-center align-items-center">
-            
-            <div class="form-group mrs">
-              <input type="text" 
-                class="form-control-sm" 
-                id="titulo" 
-                ng-model="filtro.titulo" 
-                placeholder="Buscar por título">
-            </div>
-        
-            <div class="form-group mrs">
-              <input type="text" 
-                class="form-control-sm" 
-                id="categoria" 
-                ng-model="filtro.categoria" 
-                placeholder="Buscar por categoría">
-            </div>
-        
-            <div class="form-group mrs">
-              <input type="text" 
-                class="form-control-sm" 
-                id="ubicacion" 
-                ng-model="filtro.ubicacion" 
-                placeholder="Buscar por ubicación">
-            </div>
-        
-            <div class="form-group mrs">
-              <input type="number" 
-                class="form-control-sm" 
-                id="duracion" 
-                ng-model="filtro.duracion" 
-                placeholder="Duración en días">
-            </div>
-        
-            <div class="form-group mrs">
-              <input type="text" 
-                class="form-control-sm" 
-                id="tipo" 
-                ng-model="filtro.tipo" 
-                placeholder="modalidad (ej. presencial)">
-            </div>
-        
-            <div class="form-group mrs">
-              <input type="text" 
-                class="form-control-sm" 
-                id="requisitos" 
-                ng-model="filtro.requisitos" 
-                placeholder="Requisitos">
-            </div>
-        
-            <button type="submit" class="btn btn-primary col-sm-2 mbm">
-              <i class="fa-solid fa-magnifying-glass"></i> Buscar
-            </button>
-          </form>
-      </div>
+      <form ng-submit="getFiltroOportunidades()"
+        class="container d-flex flex-wrap justify-content-center align-items-center">
+
+        <div class="form-group mrs">
+          <input type="text"
+            class="form-control-sm"
+            id="titulo"
+            ng-model="filtro.titulo"
+            placeholder="Buscar por t&iacute;tulo">
+        </div>
+
+        <div class="form-group mrs">
+          <input type="text"
+            class="form-control-sm"
+            id="categoria"
+            ng-model="filtro.categoria"
+            placeholder="Buscar por categor&iacute;a">
+        </div>
+
+        <div class="form-group mrs">
+          <input type="text"
+            class="form-control-sm"
+            id="ubicacion"
+            ng-model="filtro.ubicacion"
+            placeholder="Buscar por ubicaci&oacute;n">
+        </div>
+
+        <div class="form-group mrs">
+          <input type="number"
+            class="form-control-sm"
+            id="duracion"
+            ng-model="filtro.duracion"
+            placeholder="Duraci&oacute;n en d&iacute;as">
+        </div>
+
+        <div class="form-group mrs">
+          <input type="text"
+            class="form-control-sm"
+            id="tipo"
+            ng-model="filtro.tipo"
+            placeholder="modalidad (ej. presencial)">
+        </div>
+
+        <div class="form-group mrs">
+          <input type="text"
+            class="form-control-sm"
+            id="requisitos"
+            ng-model="filtro.requisitos"
+            placeholder="Requisitos">
+        </div>
+
+        <div class="form-group d-flex align-items-center mbm">
+          <button type="submit" class="btn btn-primary btn-sm">
+            <i class="fa-solid fa-magnifying-glass"></i> Buscar
+          </button>
+          <button type="button" class="btn btn-danger btn-sm mls" ng-click="clearFiltros()">
+            Clear
+          </button>
+        </div>
+      </form>
+    </div>
   </section>
 
   <section class="container py-5">
-
     <div class="row">
       <div class="col-md-6">
         <h2 class="mb-4">Oportunidades de Voluntariado</h2>
       </div>
       <div class="col-md-6">
-        <button class="btn btn-primary btn-lg" ng-click="goToAddForm()">
+        <button class="btn btn-primary btn-lg" ng-if="canAddOportunidad()" ng-click="goToAddForm()">
           Agregar oportunidad <i class="fa fa-plus" aria-hidden="true"></i>
         </button>
       </div>
     </div>
-    
+
     <div class="row">
       <div class="col-md-4" ng-repeat="oportunidad in oportunidades track by $index">
         <div class="card">
@@ -106,13 +115,22 @@
             <h5 class="card-title">{{oportunidad.titulo}}</h5>
             <p class="card-text">{{oportunidad.descripcion}}</p>
             <p class="card-text">Fecha de inicio: {{oportunidad.fechaInicio}}</p>
-            <p class="card-text">Ubicación: {{oportunidad.ubicacion}}</p>
-            <p class="card-text">Categoría: {{oportunidad.categoria}}</p>
+            <p class="card-text">Duraci&oacute;n: {{oportunidad.duracion}} d&iacute;as</p>
+            <p class="card-text">Ubicaci&oacute;n: {{oportunidad.ubicacion}}</p>
+            <p class="card-text">Categor&iacute;a: {{oportunidad.categoria}}</p>
             <p class="card-text">Tipo: {{oportunidad.tipo}}</p>
-            <div class="d-flex flex-row justify-content-center">
-              <button class="btn btn-primary">Ver más</button>
+            <div class="card-action d-flex flex-row justify-content-center">
+              <button class="btn btn-primary">Ver m&aacute;s</button>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row" ng-if="hasLoadedOportunidades && oportunidades.length === 0">
+      <div class="col-12">
+        <div class="alert alert-light text-center">
+          No hay coincidencias para la b&uacute;squeda realizada.
         </div>
       </div>
     </div>
