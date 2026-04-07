@@ -120,7 +120,10 @@
             <p class="card-text">Categor&iacute;a: {{oportunidad.categoria}}</p>
             <p class="card-text">Tipo: {{oportunidad.tipo}}</p>
             <div class="card-action d-flex flex-row justify-content-center">
-              <button class="btn btn-primary">Ver m&aacute;s</button>
+              <a class="btn btn-primary"
+                ui-sref="oportunidad-detalle({ id: oportunidad.id })">
+                Ver m&aacute;s
+              </a>
             </div>
           </div>
         </div>

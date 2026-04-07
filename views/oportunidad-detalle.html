@@ -1,0 +1,155 @@
+<div class="v-dark-background">
+  <div class="bg-dark text-white py-4">
+    <div class="container d-flex justify-content-between align-items-center">
+      <div class="row">
+        <div class="col-sm-3">
+          <a ui-sref="home" aria-label="Ir al inicio">
+            <img class="logo" src="assets/logo.png" alt="voluntiex-logo">
+          </a>
+        </div>
+        <div class="col-sm-9 d-flex flex-column align-items-start justify-content-center">
+          <h2>Voluntiex</h2>
+          <h3>Plataforma de Voluntariado</h3>
+        </div>
+      </div>
+      <div class="d-flex flex-column align-items-end">
+        <div class="nav-menu d-flex">
+          <a ui-sref="home" class="text-white mr-4">Home</a>
+          <a ui-sref="login" ng-if="!isValidSession()" class="text-white mr-4">Login</a>
+          <a ui-sref="register" ng-if="!isValidSession()" class="text-white mr-4">Register</a>
+          <a ui-sref="home" ng-if="isValidSession()" class="text-white" ng-click="logout()">Logout</a>
+        </div>
+        <div class="text-white mt-2" ng-if="isValidSession()">
+          {{ getSessionUserName() }}<span ng-if="getSessionUserType()"> ({{ getSessionUserType() }})</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="container py-5">
+    <div class="row mb-4">
+      <div class="col-12 d-flex justify-content-between align-items-center">
+        <h2 class="mb-0">Resumen de la oportunidad</h2>
+        <div class="d-flex align-items-center">
+          <button type="button" class="btn btn-primary mr-2">
+            Inscribirme
+          </button>
+          <button type="button" class="btn btn-outline-light" ng-click="goBackHome()">
+            Volver
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="row" ng-if="isLoading">
+      <div class="col-12">
+        <div class="alert alert-light text-center">
+          Cargando oportunidad...
+        </div>
+      </div>
+    </div>
+
+    <div class="row" ng-if="!isLoading && loadError">
+      <div class="col-12">
+        <div class="alert alert-warning text-center">
+          No fue posible cargar la oportunidad solicitada.
+        </div>
+      </div>
+    </div>
+
+    <div class="row" ng-if="!isLoading && oportunidad">
+      <div class="col-lg-8 mb-4">
+        <div class="card">
+          <div class="card-body">
+            <h3 class="card-title mb-3">{{ oportunidad.titulo }}</h3>
+            <p class="card-text">{{ oportunidad.descripcion }}</p>
+            <div class="row mt-4">
+              <div class="col-md-6 mb-3">
+                <strong>Ubicaci&oacute;n:</strong>
+                <div>{{ oportunidad.ubicacion }}</div>
+              </div>
+              <div class="col-md-6 mb-3">
+                <strong>Categor&iacute;a:</strong>
+                <div>{{ oportunidad.categoria }}</div>
+              </div>
+              <div class="col-md-6 mb-3">
+                <strong>Fecha de inicio:</strong>
+                <div>{{ oportunidad.fechaInicio }}</div>
+              </div>
+              <div class="col-md-6 mb-3">
+                <strong>Fecha de fin:</strong>
+                <div>{{ oportunidad.fechaFin }}</div>
+              </div>
+              <div class="col-md-6 mb-3">
+                <strong>Duraci&oacute;n:</strong>
+                <div>{{ oportunidad.duracion }} d&iacute;as</div>
+              </div>
+              <div class="col-md-6 mb-3">
+                <strong>Tipo:</strong>
+                <div>{{ oportunidad.tipo }}</div>
+              </div>
+              <div class="col-12">
+                <strong>Requisitos:</strong>
+                <div>{{ oportunidad.requisitos }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-4 mb-4">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title">Organizaci&oacute;n</h4>
+            <p class="card-text mb-2">
+              <strong>Nombre:</strong>
+              {{ oportunidad.organizacion.nombre || "No disponible" }}
+            </p>
+            <p class="card-text mb-2">
+              <strong>Email:</strong>
+              {{ oportunidad.organizacion.email || "No disponible" }}
+            </p>
+            <p class="card-text mb-0">
+              <strong>Misi&oacute;n:</strong>
+              {{ oportunidad.organizacion.mision || "No disponible" }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row" ng-if="!isLoading && oportunidad">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title mb-3">Beneficiarios</h4>
+
+            <div class="alert alert-light mb-0" ng-if="!hasBeneficiarios()">
+              Esta oportunidad no tiene beneficiarios asociados.
+            </div>
+
+            <div class="row" ng-if="hasBeneficiarios()">
+              <div class="col-md-6 col-lg-4 mb-3" ng-repeat="beneficiario in oportunidad.beneficiarios track by $index">
+                <div class="border rounded p-3 h-100">
+                  <h5 class="mb-2">{{ beneficiario.nombre }}</h5>
+                  <p class="mb-2">
+                    <strong>Descripci&oacute;n:</strong>
+                    {{ beneficiario.descripcion || "No disponible" }}
+                  </p>
+                  <p class="mb-2">
+                    <strong>Contacto:</strong>
+                    {{ beneficiario.contacto || "No disponible" }}
+                  </p>
+                  <p class="mb-0">
+                    <strong>Direcci&oacute;n:</strong>
+                    {{ beneficiario.direccion || "No disponible" }}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
