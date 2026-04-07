@@ -1,8 +1,6 @@
 app.controller(
   "OportunidadesController",
-  function ($scope, OportunidadesService, AuthService) {
-
-
+  function ($scope, $location, OportunidadesService, AuthService) {
     $scope.filtro = {
       titulo: "",
       categoria: "",
@@ -26,9 +24,10 @@ app.controller(
         }
       );
     };
+
     $scope.getOportunidades = function () {
       OportunidadesService.getOportunidades().then(function (response) {
-        console.log('response.data', response.data)
+        console.log("response.data", response.data);
         $scope.oportunidades = response.data || [];
         $scope.hasLoadedOportunidades = true;
       });
@@ -61,15 +60,22 @@ app.controller(
 
     $scope.addOportunidad = function () {
       if ($scope.isValidSession()) {
-        OportunidadesService.createOportunidad($scope.nuevaOportunidad).then(function (response) {
-          console.log("Oportunidad agregada con éxito", response);
-          $location.path('/');
-        }, function (error) {
-          console.error("Error al agregar oportunidad", error);
-        });
+        OportunidadesService.createOportunidad($scope.nuevaOportunidad).then(
+          function (response) {
+            console.log("Oportunidad agregada con exito", response);
+            $location.path("/");
+          },
+          function (error) {
+            console.error("Error al agregar oportunidad", error);
+          }
+        );
       } else {
-        $location.path('/auth/login');
+        $location.path("/auth/login");
       }
+    };
+
+    $scope.goToOportunidadDetalle = function (id) {
+      $location.path("/oportunidades/" + id);
     };
 
     $scope.deleteOportunidad = function (id) {
@@ -83,7 +89,7 @@ app.controller(
     };
 
     AuthService.restoreSession().catch(function (error) {
-      console.log("No se pudo reconstruir la sesión actual.", error);
+      console.log("No se pudo reconstruir la sesion actual.", error);
     });
   }
 );

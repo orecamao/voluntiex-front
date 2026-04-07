@@ -44,6 +44,11 @@ app.config(function ($stateProvider, $urlRouterProvider, $locationProvider) {
       templateUrl: "views/oportunidades.html",
       controller: "OportunidadesController",
     })
+    .state("oportunidad-detalle", {
+      url: "/oportunidades/:id",
+      templateUrl: "views/oportunidad-detalle.html",
+      controller: "OportunidadDetalleController",
+    })
     .state("beneficiarios", {
       url: "/beneficiarios",
       templateUrl: "views/beneficiarios.html",
