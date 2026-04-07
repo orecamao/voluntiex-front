@@ -1,4 +1,3 @@
-<!-- views/home.html -->
 <div class="v-dark-background">
   <div class="bg-dark text-white py-4">
     <div class="container d-flex justify-content-between align-items-center">
@@ -14,14 +13,27 @@
         </div>
       </div>
       <div class="d-flex flex-column align-items-end">
-        <div class="nav-menu d-flex">
+        <div class="nav-menu d-flex flex-wrap justify-content-end">
           <a ui-sref="home" class="text-white mr-4">Home</a>
+          <a ui-sref="perfil" class="text-white mr-4" ng-if="isValidSession()">Mi perfil</a>
+          <a
+            ui-sref="mis-postulaciones"
+            ng-if="canViewMisPostulaciones()"
+            class="text-white mr-4">
+            Mis postulaciones
+          </a>
+          <a
+            ui-sref="mis-oportunidades"
+            ng-if="canViewMisOportunidades()"
+            class="text-white mr-4">
+            Mis oportunidades
+          </a>
           <a ui-sref="login" ng-if="!isValidSession()" class="text-white mr-4">Login</a>
           <a ui-sref="register" ng-if="!isValidSession()" class="text-white mr-4">Register</a>
           <a ui-sref="home" ng-if="isValidSession()" class="text-white" ng-click="logout()">Logout</a>
         </div>
         <div class="text-white mt-2" ng-if="isValidSession()">
-          {{ getSessionUserName() }}<span ng-if="getSessionUserType()"> ({{ getSessionUserType() }})</span>
+          {{ getSessionUserName() }}<span ng-if="getSessionUserTypeLabel()"> ({{ getSessionUserTypeLabel() }})</span>
         </div>
       </div>
     </div>
@@ -33,11 +45,13 @@
       <h1>Bienvenido a Voluntiex</h1>
       <h2>La plataforma de voluntariado en l&iacute;nea</h2>
 
-      <form ng-submit="getFiltroOportunidades()"
+      <form
+        ng-submit="getFiltroOportunidades()"
         class="container d-flex flex-wrap justify-content-center align-items-center">
 
         <div class="form-group mrs">
-          <input type="text"
+          <input
+            type="text"
             class="form-control-sm"
             id="titulo"
             ng-model="filtro.titulo"
@@ -45,7 +59,8 @@
         </div>
 
         <div class="form-group mrs">
-          <input type="text"
+          <input
+            type="text"
             class="form-control-sm"
             id="categoria"
             ng-model="filtro.categoria"
@@ -53,7 +68,8 @@
         </div>
 
         <div class="form-group mrs">
-          <input type="text"
+          <input
+            type="text"
             class="form-control-sm"
             id="ubicacion"
             ng-model="filtro.ubicacion"
@@ -61,7 +77,8 @@
         </div>
 
         <div class="form-group mrs">
-          <input type="number"
+          <input
+            type="number"
             class="form-control-sm"
             id="duracion"
             ng-model="filtro.duracion"
@@ -69,15 +86,17 @@
         </div>
 
         <div class="form-group mrs">
-          <input type="text"
+          <input
+            type="text"
             class="form-control-sm"
             id="tipo"
             ng-model="filtro.tipo"
-            placeholder="modalidad (ej. presencial)">
+            placeholder="Modalidad">
         </div>
 
         <div class="form-group mrs">
-          <input type="text"
+          <input
+            type="text"
             class="form-control-sm"
             id="requisitos"
             ng-model="filtro.requisitos"
@@ -97,11 +116,11 @@
   </section>
 
   <section class="container py-5">
-    <div class="row">
+    <div class="row align-items-center">
       <div class="col-md-6">
         <h2 class="mb-4">Oportunidades de Voluntariado</h2>
       </div>
-      <div class="col-md-6">
+      <div class="col-md-6 text-md-right">
         <button class="btn btn-primary btn-lg" ng-if="canAddOportunidad()" ng-click="goToAddForm()">
           Agregar oportunidad <i class="fa fa-plus" aria-hidden="true"></i>
         </button>
@@ -109,21 +128,45 @@
     </div>
 
     <div class="row">
-      <div class="col-md-4" ng-repeat="oportunidad in oportunidades track by $index">
+      <div class="col-md-4" ng-repeat="oportunidad in oportunidades track by oportunidad.id">
         <div class="card">
           <div class="card-body">
-            <h5 class="card-title">{{oportunidad.titulo}}</h5>
-            <p class="card-text">{{oportunidad.descripcion}}</p>
-            <p class="card-text">Fecha de inicio: {{oportunidad.fechaInicio}}</p>
-            <p class="card-text">Duraci&oacute;n: {{oportunidad.duracion}} d&iacute;as</p>
-            <p class="card-text">Ubicaci&oacute;n: {{oportunidad.ubicacion}}</p>
-            <p class="card-text">Categor&iacute;a: {{oportunidad.categoria}}</p>
-            <p class="card-text">Tipo: {{oportunidad.tipo}}</p>
-            <div class="card-action d-flex flex-row justify-content-center">
-              <a class="btn btn-primary"
-                ui-sref="oportunidad-detalle({ id: oportunidad.id })">
+            <h5 class="card-title">{{ oportunidad.titulo }}</h5>
+            <p class="card-text text-muted">{{ oportunidad.tipoCreador === 'organizacion' ? 'Creada por organizacion ' : 'Creada por beneficiario ' }}{{ oportunidad.nombreUsuario || 'No disponible' }}</p>
+            <p class="card-text">{{ oportunidad.descripcion }}</p>
+            <p class="card-text"><strong>Estado:</strong> {{ oportunidad.estado || 'ACTIVA' }}</p>
+            <p class="card-text">Fecha de inicio: {{ oportunidad.fechaInicio }}</p>
+            <p class="card-text">Duraci&oacute;n: {{ oportunidad.duracion }} d&iacute;as</p>
+            <p class="card-text">Ubicaci&oacute;n: {{ oportunidad.ubicacion }}</p>
+            <p class="card-text">Categor&iacute;a: {{ oportunidad.categoria }}</p>
+            <p class="card-text">Tipo: {{ oportunidad.tipo }}</p>
+            <p class="card-text" ng-if="hasSolicitudRegistrada(oportunidad.id)">
+              <strong>Mi postulaci&oacute;n:</strong> {{ getEstadoPostulacion(oportunidad.id) }}
+            </p>
+
+            <div class="card-action d-flex flex-wrap justify-content-center">
+              <a class="btn btn-primary mr-2 mb-2" ui-sref="oportunidad-detalle({ id: oportunidad.id })">
                 Ver m&aacute;s
               </a>
+              <button
+                type="button"
+                class="btn btn-outline-primary mb-2"
+                ng-if="canPostularse(oportunidad)"
+                ng-disabled="postulandoPorOportunidad[oportunidad.id]"
+                ng-click="postularse(oportunidad)">
+                {{ canRepostularse(oportunidad.id) ? 'Postularme de nuevo' : 'Postularme' }}
+              </button>
+            </div>
+
+            <div
+              class="alert alert-success py-2 mt-2 mb-0"
+              ng-if="postulacionExitosaPorOportunidad[oportunidad.id]">
+              {{ postulacionExitosaPorOportunidad[oportunidad.id] }}
+            </div>
+            <div
+              class="alert alert-warning py-2 mt-2 mb-0"
+              ng-if="postulacionErrorPorOportunidad[oportunidad.id]">
+              {{ postulacionErrorPorOportunidad[oportunidad.id] }}
             </div>
           </div>
         </div>

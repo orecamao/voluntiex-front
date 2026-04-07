@@ -16,12 +16,26 @@ app.factory("AuthService", function ($http, $q) {
     return window.sessionStorage.getItem(key) || "";
   }
 
+  function normalizeUserType(tipo) {
+    return (tipo || "").toString().trim().toLowerCase();
+  }
+
+  function formatUserTypeLabel(tipo) {
+    var normalizedType = normalizeUserType(tipo);
+
+    if (normalizedType === "organizacion") {
+      return "organizaci\u00f3n";
+    }
+
+    return normalizedType;
+  }
+
   function readSessionFromStorage() {
     return {
       token: getStoredValue(tokenKey),
       nombre: getStoredValue(userNameKey),
       email: getStoredValue(userEmailKey),
-      tipo: getStoredValue(userTypeKey),
+      tipo: normalizeUserType(getStoredValue(userTypeKey)),
     };
   }
 
@@ -39,7 +53,7 @@ app.factory("AuthService", function ($http, $q) {
     }
 
     if (!session.tipo) {
-      session.tipo = getStoredValue(userTypeKey);
+      session.tipo = normalizeUserType(getStoredValue(userTypeKey));
     }
   }
 
@@ -47,7 +61,7 @@ app.factory("AuthService", function ($http, $q) {
     session.token = sessionData.token || "";
     session.nombre = sessionData.nombre || "";
     session.email = sessionData.email || "";
-    session.tipo = sessionData.tipo || "";
+    session.tipo = normalizeUserType(sessionData.tipo);
 
     if (session.token) {
       window.sessionStorage.setItem(tokenKey, session.token);
@@ -83,18 +97,6 @@ app.factory("AuthService", function ($http, $q) {
     });
   }
 
-  function formatUserType(tipo) {
-    if (!tipo) {
-      return "";
-    }
-
-    if (tipo.toLowerCase() === "organizacion") {
-      return "organizaci\u00f3n";
-    }
-
-    return tipo.toLowerCase();
-  }
-
   function buildAuthorizationHeader(token) {
     if (!token) {
       return "";
@@ -127,10 +129,81 @@ app.factory("AuthService", function ($http, $q) {
     };
   }
 
+  function buildLoginPayload(usuario) {
+    return {
+      email: usuario.email,
+      password: usuario.password,
+    };
+  }
+
+  function buildRegisterPayload(nuevoUsuario) {
+    return {
+      nombre: nuevoUsuario.nombre,
+      tipo: normalizeUserType(nuevoUsuario.tipo),
+      email: nuevoUsuario.email,
+      password: nuevoUsuario.password,
+    };
+  }
+
+  function isSameValue(left, right) {
+    return (left || "").toString().trim().toLowerCase() ===
+      (right || "").toString().trim().toLowerCase();
+  }
+
+  function isOpportunityOwnerForSession(currentSession, oportunidad) {
+    var creatorType;
+
+    if (!currentSession.token || !currentSession.tipo || !oportunidad) {
+      return false;
+    }
+
+    creatorType = normalizeUserType(oportunidad.tipoCreador);
+
+    if (!creatorType || currentSession.tipo !== creatorType) {
+      return false;
+    }
+
+    if (
+      creatorType === "organizacion" &&
+      oportunidad.organizacion &&
+      isSameValue(oportunidad.organizacion.email, currentSession.email)
+    ) {
+      return true;
+    }
+
+    if (
+      creatorType === "beneficiario" &&
+      oportunidad.beneficiarioCreador &&
+      isSameValue(oportunidad.beneficiarioCreador.email, currentSession.email)
+    ) {
+      return true;
+    }
+
+    if (isSameValue(oportunidad.nombreUsuario, currentSession.nombre)) {
+      return true;
+    }
+
+    if (
+      oportunidad.organizacion &&
+      isSameValue(oportunidad.organizacion.nombre, currentSession.nombre)
+    ) {
+      return true;
+    }
+
+    if (
+      oportunidad.beneficiarioCreador &&
+      isSameValue(oportunidad.beneficiarioCreador.nombre, currentSession.nombre)
+    ) {
+      return true;
+    }
+
+    return false;
+  }
+
   return {
     login: function (usuario) {
       return $http
-        .post(apiUrl + "/login", usuario, {
+        .post(apiUrl + "/login", buildLoginPayload(usuario), {
           headers: {
             "Content-Type": "application/json",
           },
@@ -140,7 +213,7 @@ app.factory("AuthService", function ($http, $q) {
             token: response.data.token,
             nombre: response.data.nombre,
             email: response.data.email || usuario.email,
-            tipo: formatUserType(response.data.tipo),
+            tipo: response.data.tipo,
           });
 
           return response;
@@ -150,16 +223,30 @@ app.factory("AuthService", function ($http, $q) {
       clearSession();
     },
     register: function (nuevoUsuario) {
-      return $http.post(apiUrl + "/register", nuevoUsuario, {
+      return $http.post(apiUrl + "/register", buildRegisterPayload(nuevoUsuario), {
         headers: {
           "Content-Type": "application/json",
         },
       });
     },
+    changePassword: function (currentPassword, newPassword) {
+      return $http.put(
+        apiUrl + "/change-password",
+        {
+          currentPassword: currentPassword,
+          newPassword: newPassword,
+        },
+        buildAuthConfig({
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+      );
+    },
     restoreSession: function () {
       var storedSession = readSessionFromStorage();
 
-      if (session.token && session.nombre) {
+      if (session.token && (session.nombre || session.email) && session.tipo) {
         return $q.when(getSessionSnapshot());
       }
 
@@ -183,15 +270,19 @@ app.factory("AuthService", function ($http, $q) {
           function (response) {
             saveSession({
               token: storedSession.token,
-              nombre: response.data.nombre,
+              nombre: response.data.nombre || storedSession.nombre,
               email: response.data.email || storedSession.email,
-              tipo: formatUserType(response.data.tipo) || storedSession.tipo,
+              tipo: response.data.tipo || storedSession.tipo,
             });
 
             return getSessionSnapshot();
           },
           function (error) {
-            if (storedSession.nombre || storedSession.email || storedSession.tipo) {
+            if (
+              error &&
+              (error.status === 0 || error.status >= 500) &&
+              (storedSession.nombre || storedSession.email || storedSession.tipo)
+            ) {
               saveSession(storedSession);
               return getSessionSnapshot();
             }
@@ -218,8 +309,29 @@ app.factory("AuthService", function ($http, $q) {
     getSessionUserType: function () {
       return getSessionSnapshot().tipo;
     },
+    getSessionUserTypeLabel: function () {
+      return formatUserTypeLabel(this.getSessionUserType());
+    },
     hasSession: function () {
       return !!this.getToken();
+    },
+    isUserType: function (tipo) {
+      return this.getSessionUserType() === normalizeUserType(tipo);
+    },
+    canCreateOportunidad: function () {
+      return this.isUserType("beneficiario") || this.isUserType("organizacion");
+    },
+    canApplyToOpportunities: function () {
+      return this.isUserType("voluntario");
+    },
+    canViewMisPostulaciones: function () {
+      return this.canApplyToOpportunities();
+    },
+    canViewMisOportunidades: function () {
+      return this.canCreateOportunidad();
+    },
+    isOpportunityOwner: function (oportunidad) {
+      return isOpportunityOwnerForSession(getSessionSnapshot(), oportunidad);
     },
     addAuthHeader: function (config) {
       return buildAuthConfig(config);

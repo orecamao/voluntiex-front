@@ -19,7 +19,7 @@
               <a ui-sref="home" ng-if="isValidSession()" class="text-white" ng-click="logout()">Logout</a>
           </div>
           <div class="text-white mt-2" ng-if="isValidSession()">
-            {{ getSessionUserName() }}<span ng-if="getSessionUserType()"> ({{ getSessionUserType() }})</span>
+            {{ getSessionUserName() }}<span ng-if="getSessionUserTypeLabel()"> ({{ getSessionUserTypeLabel() }})</span>
           </div>
         </div>
     </div>

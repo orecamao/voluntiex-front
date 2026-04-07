@@ -27,6 +27,10 @@ body > [ui-view] > .v-dark-background {
   border-radius: 100px;
 }
 
+.nav-menu a {
+  white-space: nowrap;
+}
+
 .v-banner {
   background-image: url('/assets/banner.jpg');
   background-size: contain;
@@ -64,6 +68,7 @@ body > [ui-view] > .v-dark-background {
 
 .card-action {
   margin-top: auto;
+  gap: 0.5rem;
 }
 
 .card-title,
@@ -73,4 +78,9 @@ body > [ui-view] > .v-dark-background {
 
 .card:hover {
   transform: translateY(-10px);
+}
+
+.table-dark-table th,
+.table-dark-table td {
+  vertical-align: middle;
 }
