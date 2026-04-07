@@ -11,13 +11,17 @@ app.controller(
       tipo: "",
       requisitos: "",
     };
+    $scope.oportunidades = [];
+    $scope.hasLoadedOportunidades = false;
 
     $scope.getFiltroOportunidades = function () {
       OportunidadesService.getFiltroOportunidades($scope.filtro).then(
         function (response) {
-          $scope.oportunidades = response.data;
+          $scope.oportunidades = response.data || [];
+          $scope.hasLoadedOportunidades = true;
         },
         function (error) {
+          $scope.hasLoadedOportunidades = true;
           console.log("Error al buscar oportunidades: ", error);
         }
       );
@@ -25,10 +29,22 @@ app.controller(
     $scope.getOportunidades = function () {
       OportunidadesService.getOportunidades().then(function (response) {
         console.log('response.data', response.data)
-        if(response.data.length > 0) {
-          $scope.oportunidades = response.data;
-        }
+        $scope.oportunidades = response.data || [];
+        $scope.hasLoadedOportunidades = true;
       });
+    };
+
+    $scope.clearFiltros = function () {
+      $scope.filtro = {
+        titulo: "",
+        categoria: "",
+        ubicacion: "",
+        duracion: "",
+        tipo: "",
+        requisitos: "",
+      };
+
+      $scope.getOportunidades();
     };
 
     $scope.isValidSession = function () {

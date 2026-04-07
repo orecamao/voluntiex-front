@@ -77,6 +77,10 @@ app.controller("AuthController", function ($scope, $location, AuthService) {
     return AuthService.getSessionUserType();
   };
 
+  $scope.goToLogin = function () {
+    $location.path("/auth/login");
+  };
+
   $scope.registrarUsuario = function () {
     if ($scope.isValidSession()) {
       $location.path("/");
@@ -95,14 +99,17 @@ app.controller("AuthController", function ($scope, $location, AuthService) {
       AuthService.register($scope.nuevoUsuario).then(
         function (response) {
           console.log("Usuario registrado con \u00e9xito", response.data);
-          $location.path("/auth/login");
+          $scope.isSubmitting = false;
+          $location.path("/auth/register-success");
         },
         function (error) {
+          $scope.isSubmitting = false;
           console.error("Error al registrar usuario:", error);
           alert("Error al registrar usuario");
         }
       );
     } else {
+      $scope.isSubmitting = false;
       alert("Las contrase\u00f1as no coinciden");
     }
   };
