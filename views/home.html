@@ -176,7 +176,7 @@
     <div class="row" ng-if="hasLoadedOportunidades && oportunidades.length === 0">
       <div class="col-12">
         <div class="alert alert-light text-center">
-          No hay coincidencias para la b&uacute;squeda realizada.
+          {{ hasActiveFilters() ? 'No hay coincidencias para la b&uacute;squeda realizada.' : 'No hay oportunidades publicadas.' }}
         </div>
       </div>
     </div>

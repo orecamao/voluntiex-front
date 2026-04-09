@@ -105,6 +105,18 @@ app.controller(
       $scope.getOportunidades();
     };
 
+    $scope.hasActiveFilters = function () {
+      var hasFilters = false;
+
+      angular.forEach($scope.filtro, function (value) {
+        if (value !== null && value !== undefined && value !== "") {
+          hasFilters = true;
+        }
+      });
+
+      return hasFilters;
+    };
+
     $scope.isValidSession = function () {
       return AuthService.hasSession();
     };
