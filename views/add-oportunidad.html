@@ -54,6 +54,14 @@
                   </li>
                 </ul>
               </div>
+              <div class="mt-2" ng-if="linkedExistingBeneficiaries.length">
+                <strong>Beneficiarios existentes vinculados:</strong>
+                <ul class="mb-0 mt-2">
+                  <li ng-repeat="beneficiario in linkedExistingBeneficiaries track by beneficiario.id">
+                    {{ beneficiario.nombre }} - {{ beneficiario.email }}
+                  </li>
+                </ul>
+              </div>
             </div>
 
             <div class="alert alert-warning" ng-if="createErrorMessage">
@@ -112,7 +120,7 @@
               <div class="form-group" ng-if="canRegisterNewBeneficiarios()">
                 <label>Beneficiarios de la oportunidad</label>
                 <p class="text-muted">
-                  Como organizaci&oacute;n, debes registrar aqu&iacute; a los beneficiarios de esta oportunidad. Se les crear&aacute; una cuenta de tipo beneficiario con contrase&ntilde;a temporal.
+                  Como organizaci&oacute;n, puedes vincular beneficiarios por correo. Si el correo ya existe, se reutilizar&aacute; esa cuenta; si no existe, se crear&aacute; una cuenta de tipo beneficiario con contrase&ntilde;a temporal.
                 </p>
 
                 <div class="border rounded p-3 mb-3" ng-repeat="beneficiario in beneficiariosNuevos track by $index">

@@ -130,6 +130,16 @@ app.controller(
       );
     };
 
+    $scope.toggleVoluntarioProfile = function (solicitud) {
+      solicitud.showVoluntarioProfile = !solicitud.showVoluntarioProfile;
+    };
+
+    $scope.getVoluntarioProfileButtonLabel = function (solicitud) {
+      return solicitud && solicitud.showVoluntarioProfile
+        ? "Ocultar perfil"
+        : "Ver perfil";
+    };
+
     $scope.loadSolicitudes = function (oportunidad) {
       oportunidad.isLoadingSolicitudes = true;
       oportunidad.solicitudesError = "";

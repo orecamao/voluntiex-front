@@ -147,10 +147,34 @@
                         <small class="text-muted" ng-if="solicitud.voluntario && solicitud.voluntario.email">
                           {{ solicitud.voluntario.email }}
                         </small>
+                        <div class="border rounded p-2 mt-2 bg-light text-dark" ng-if="solicitud.showVoluntarioProfile">
+                          <div class="mb-1">
+                            <strong>Nombre:</strong>
+                            {{ (solicitud.voluntario && solicitud.voluntario.nombre) || 'No disponible' }}
+                          </div>
+                          <div class="mb-1">
+                            <strong>Correo:</strong>
+                            {{ (solicitud.voluntario && solicitud.voluntario.email) || 'No disponible' }}
+                          </div>
+                          <div class="mb-1">
+                            <strong>Habilidades:</strong>
+                            {{ (solicitud.voluntario && solicitud.voluntario.habilidades) || 'No disponible' }}
+                          </div>
+                          <div class="mb-0">
+                            <strong>Intereses:</strong>
+                            {{ (solicitud.voluntario && solicitud.voluntario.intereses) || 'No disponible' }}
+                          </div>
+                        </div>
                       </td>
                       <td>{{ solicitud.estado }}</td>
                       <td>{{ solicitud.fechaSolicitud || solicitud.fechaActualizacion || 'No disponible' }}</td>
                       <td class="text-right">
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary btn-sm mr-2"
+                          ng-click="toggleVoluntarioProfile(solicitud)">
+                          {{ getVoluntarioProfileButtonLabel(solicitud) }}
+                        </button>
                         <button
                           type="button"
                           class="btn btn-success btn-sm mr-2"

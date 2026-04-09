@@ -111,6 +111,47 @@ app.controller(
         });
     }
 
+    function buildBeneficiarioSummary(beneficiario, draft, options) {
+      var config = options || {};
+
+      return {
+        id: beneficiario.id,
+        nombre: beneficiario.nombre || draft.nombre,
+        email: normalizeEmail(
+          beneficiario.contacto || beneficiario.email || draft.email
+        ),
+        descripcion: beneficiario.descripcion || draft.descripcion,
+        direccion: beneficiario.direccion || draft.direccion,
+        tempPassword: config.tempPassword || "",
+        wasCreated: !!config.wasCreated,
+      };
+    }
+
+    function splitExistingAndMissingBeneficiarios(drafts, beneficiarios) {
+      var existingBeneficiarios = [];
+      var missingDrafts = [];
+
+      angular.forEach(drafts, function (draft) {
+        var match = findBeneficiarioByEmail(beneficiarios, draft.email);
+
+        if (match && match.id) {
+          existingBeneficiarios.push(
+            buildBeneficiarioSummary(match, draft, {
+              wasCreated: false,
+            })
+          );
+          return;
+        }
+
+        missingDrafts.push(draft);
+      });
+
+      return {
+        existingBeneficiarios: existingBeneficiarios,
+        missingDrafts: missingDrafts,
+      };
+    }
+
     function validateBeneficiarioDrafts(drafts) {
       var emails = {};
       var index;
@@ -175,19 +216,15 @@ app.controller(
             );
           }
 
-          return {
-            id: match.id,
-            nombre: draft.nombre,
-            email: draft.email,
-            descripcion: draft.descripcion,
-            direccion: draft.direccion,
+          return buildBeneficiarioSummary(match, draft, {
             tempPassword: draft.tempPassword,
-          };
+            wasCreated: true,
+          });
         });
       });
     }
 
-    function registerBeneficiariosForOpportunity(drafts) {
+    function registerNewBeneficiariosForOpportunity(drafts) {
       var chain = $q.when();
 
       angular.forEach(drafts, function (draft) {
@@ -210,10 +247,55 @@ app.controller(
         });
     }
 
+    function resolveBeneficiariosForOpportunity(drafts) {
+      return BeneficiariosService.getBeneficiarios().then(function (response) {
+        var beneficiarios = Array.isArray(response.data) ? response.data : [];
+        var resolution = splitExistingAndMissingBeneficiarios(drafts, beneficiarios);
+
+        if (!resolution.missingDrafts.length) {
+          return resolution.existingBeneficiarios;
+        }
+
+        return registerNewBeneficiariosForOpportunity(
+          resolution.missingDrafts.map(function (draft) {
+            return angular.extend({}, draft, {
+              tempPassword: generateTemporaryPassword(),
+            });
+          })
+        ).then(function (newBeneficiarios) {
+          return resolution.existingBeneficiarios.concat(newBeneficiarios);
+        });
+      });
+    }
+
+    function buildCreateSuccessMessage() {
+      var createdCount = ($scope.createdBeneficiaryCredentials || []).length;
+      var reusedCount = ($scope.linkedExistingBeneficiaries || []).length;
+
+      if (!$scope.canRegisterNewBeneficiarios()) {
+        return "Oportunidad creada correctamente.";
+      }
+
+      if (createdCount && reusedCount) {
+        return "Oportunidad creada. Se registraron nuevos beneficiarios y se vincularon beneficiarios existentes.";
+      }
+
+      if (createdCount) {
+        return "Oportunidad creada y beneficiarios registrados correctamente.";
+      }
+
+      if (reusedCount) {
+        return "Oportunidad creada y beneficiarios existentes vinculados correctamente.";
+      }
+
+      return "Oportunidad creada correctamente.";
+    }
+
     $scope.nuevaOportunidad = createEmptyOportunidad();
     $scope.beneficiariosNuevos = [createEmptyBeneficiarioDraft()];
     $scope.beneficiariosRegistrados = [];
     $scope.createdBeneficiaryCredentials = [];
+    $scope.linkedExistingBeneficiaries = [];
     $scope.isSubmittingOportunidad = false;
     $scope.isRegisteringBeneficiarios = false;
     $scope.createErrorMessage = "";
@@ -259,6 +341,7 @@ app.controller(
     $scope.invalidateRegisteredBeneficiarios = function () {
       $scope.beneficiariosRegistrados = [];
       $scope.createdBeneficiaryCredentials = [];
+      $scope.linkedExistingBeneficiaries = [];
       $scope.createSuccessMessage = "";
     };
 
@@ -306,14 +389,8 @@ app.controller(
         if ($scope.beneficiariosRegistrados.length) {
           beneficiariosPromise = $q.when($scope.beneficiariosRegistrados);
         } else {
-          beneficiarioDrafts = beneficiarioDrafts.map(function (beneficiario) {
-            return angular.extend({}, beneficiario, {
-              tempPassword: generateTemporaryPassword(),
-            });
-          });
-
           $scope.isRegisteringBeneficiarios = true;
-          beneficiariosPromise = registerBeneficiariosForOpportunity(beneficiarioDrafts).then(
+          beneficiariosPromise = resolveBeneficiariosForOpportunity(beneficiarioDrafts).then(
             function (beneficiariosRegistrados) {
               $scope.beneficiariosRegistrados = beneficiariosRegistrados;
               return beneficiariosRegistrados;
@@ -344,11 +421,16 @@ app.controller(
         })
         .then(function () {
           $scope.createdBeneficiaryCredentials = angular.copy(
-            $scope.beneficiariosRegistrados
+            $scope.beneficiariosRegistrados.filter(function (beneficiario) {
+              return !!beneficiario.wasCreated;
+            })
           );
-          $scope.createSuccessMessage = $scope.canRegisterNewBeneficiarios()
-            ? "Oportunidad creada y beneficiarios registrados correctamente."
-            : "Oportunidad creada correctamente.";
+          $scope.linkedExistingBeneficiaries = angular.copy(
+            $scope.beneficiariosRegistrados.filter(function (beneficiario) {
+              return !beneficiario.wasCreated;
+            })
+          );
+          $scope.createSuccessMessage = buildCreateSuccessMessage();
           $scope.nuevaOportunidad = createEmptyOportunidad();
           $scope.beneficiariosNuevos = [createEmptyBeneficiarioDraft()];
           $scope.beneficiariosRegistrados = [];

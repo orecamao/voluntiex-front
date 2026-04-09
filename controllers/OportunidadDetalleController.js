@@ -218,6 +218,16 @@ app.controller(
       return $scope.ownerSolicitudes.length > 0;
     };
 
+    $scope.toggleVoluntarioProfile = function (solicitud) {
+      solicitud.showVoluntarioProfile = !solicitud.showVoluntarioProfile;
+    };
+
+    $scope.getVoluntarioProfileButtonLabel = function (solicitud) {
+      return solicitud && solicitud.showVoluntarioProfile
+        ? "Ocultar perfil"
+        : "Ver perfil";
+    };
+
     $scope.isSolicitudActiva = function (solicitud) {
       var estado = normalizeState(solicitud && solicitud.estado);
 
