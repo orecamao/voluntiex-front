@@ -112,6 +112,13 @@ app.controller(
           $scope.actionMessage = "Postulacion cancelada correctamente.";
         },
         function (error) {
+          console.error("Error al cancelar postulacion", {
+            status: error && error.status,
+            data: error && error.data,
+            solicitudId: solicitud && solicitud.id,
+            sessionUserType: AuthService.getSessionUserType(),
+            hasToken: !!AuthService.getToken(),
+          });
           $scope.actionErrorMessage = buildCancelErrorMessage(error);
         }
       ).finally(function () {

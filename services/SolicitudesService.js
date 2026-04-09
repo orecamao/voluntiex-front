@@ -36,8 +36,8 @@ app.factory("SolicitudesService", function ($http, AuthService) {
     cancelarSolicitud: function (solicitudId) {
       return $http.put(
         apiUrl + "/" + solicitudId + "/cancelar",
-        null,
-        AuthService.addAuthHeader({})
+        {},
+        buildJsonConfig()
       );
     },
   };
