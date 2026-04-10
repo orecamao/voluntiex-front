@@ -1,0 +1,118 @@
+<div class="v-dark-background">
+  <div class="bg-dark text-white py-4">
+    <div class="container d-flex justify-content-between align-items-center">
+      <div class="row">
+        <div class="col-sm-3">
+          <a ui-sref="home" aria-label="Ir al inicio">
+            <img class="logo" src="assets/logo.png" alt="voluntiex-logo">
+          </a>
+        </div>
+        <div class="col-sm-9 d-flex flex-column align-items-start justify-content-center">
+          <h2>Voluntiex</h2>
+          <h3>Plataforma de Voluntariado</h3>
+        </div>
+      </div>
+      <div class="d-flex flex-column align-items-end">
+        <div class="nav-menu d-flex flex-wrap justify-content-end">
+          <a ui-sref="home" class="text-white mr-4">Home</a>
+          <a ui-sref="perfil" class="text-white mr-4" ng-if="isValidSession()">Mi perfil</a>
+          <a
+            ui-sref="mis-postulaciones"
+            ng-if="canViewMisPostulaciones()"
+            class="text-white mr-4">
+            Mis postulaciones
+          </a>
+          <a
+            ui-sref="mis-oportunidades"
+            ng-if="canViewMisOportunidades()"
+            class="text-white mr-4">
+            Mis oportunidades
+          </a>
+          <a ui-sref="home" ng-if="isValidSession()" class="text-white" ng-click="logout()">Logout</a>
+        </div>
+        <div class="text-white mt-2" ng-if="isValidSession()">
+          {{ getSessionUserName() }}<span ng-if="getSessionUserTypeLabel()"> ({{ getSessionUserTypeLabel() }})</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="card">
+          <div class="card-body">
+            <h2 class="mb-4">Mi perfil</h2>
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <strong>Nombre</strong>
+                <div>{{ getSessionUserName() }}</div>
+              </div>
+              <div class="col-md-6 mb-3">
+                <strong>Correo</strong>
+                <div>{{ getSessionUserEmail() }}</div>
+              </div>
+              <div class="col-md-6 mb-4">
+                <strong>Tipo de usuario</strong>
+                <div>{{ getSessionUserTypeLabel() || "No disponible" }}</div>
+              </div>
+            </div>
+
+            <button type="button" class="btn btn-outline-primary mb-4" ng-click="goToPrimaryDestination()">
+              {{ getPrimaryDestinationLabel() }}
+            </button>
+
+            <h4 class="mb-3">Cambiar contrase&ntilde;a</h4>
+
+            <div class="alert alert-success" ng-if="changePasswordSuccessMessage">
+              {{ changePasswordSuccessMessage }}
+            </div>
+            <div class="alert alert-warning" ng-if="changePasswordErrorMessage">
+              {{ changePasswordErrorMessage }}
+            </div>
+
+            <form ng-submit="changePassword()">
+              <div class="form-group">
+                <label for="currentPassword">Contrase&ntilde;a actual</label>
+                <input
+                  type="password"
+                  class="form-control"
+                  id="currentPassword"
+                  ng-model="passwordData.currentPassword"
+                  required>
+              </div>
+
+              <div class="form-group">
+                <label for="newPassword">Nueva contrase&ntilde;a</label>
+                <input
+                  type="password"
+                  class="form-control"
+                  id="newPassword"
+                  ng-model="passwordData.newPassword"
+                  required>
+              </div>
+
+              <div class="form-group">
+                <label for="confirmNewPassword">Confirmar nueva contrase&ntilde;a</label>
+                <input
+                  type="password"
+                  class="form-control"
+                  id="confirmNewPassword"
+                  ng-model="passwordData.confirmNewPassword"
+                  required>
+              </div>
+
+              <button
+                type="submit"
+                class="btn btn-primary"
+                ng-disabled="isSubmittingPassword">
+                {{ isSubmittingPassword ? 'Actualizando...' : 'Cambiar contrase&ntilde;a' }}
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

@@ -27,7 +27,22 @@ app.config(function ($stateProvider, $urlRouterProvider, $locationProvider) {
     .state("add-oportunidad", {
       url: "/add-oportunidad",
       templateUrl: "views/add-oportunidad.html",
-      controller: "OportunidadesController",
+      controller: "AddOportunidadController",
+    })
+    .state("mis-postulaciones", {
+      url: "/mis-postulaciones",
+      templateUrl: "views/mis-postulaciones.html",
+      controller: "MisPostulacionesController",
+    })
+    .state("mis-oportunidades", {
+      url: "/mis-oportunidades",
+      templateUrl: "views/mis-oportunidades.html",
+      controller: "MisOportunidadesController",
+    })
+    .state("perfil", {
+      url: "/perfil",
+      templateUrl: "views/perfil.html",
+      controller: "PerfilController",
     })
     .state("voluntarios", {
       url: "/voluntarios",
